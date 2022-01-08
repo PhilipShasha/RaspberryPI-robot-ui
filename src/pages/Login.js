@@ -19,8 +19,7 @@ function Login() {
         try {
             setLoadingMsg('Logging in')
             const response = await axios.post(`${API_URL}/login`, authData)
-            console.log(response)
-            navigate('/control')
+            navigate('/control', { state: {token: response.data.token }})
         } catch (err) {
             console.error(err)
         } finally {
