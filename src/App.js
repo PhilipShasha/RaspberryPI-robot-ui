@@ -5,6 +5,8 @@ import { Routes, Route, BrowserRouter } from "react-router-dom"
 import Login from './pages/Login'
 import Control from './pages/Control'
 
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
+
 function App() {
     return (
         <BrowserRouter>
