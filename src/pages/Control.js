@@ -1,9 +1,9 @@
+import React, { useState, useEffect, useCallback } from 'react'
 import { Link, useLocation } from "react-router-dom"
-import React, { useState, useEffect } from 'react'
+import { Card, CardActions, CardContent, Typography, Button, Container } from '@mui/material'
 import Loader from "react-loader-spinner"
-import { Card, CardActions, CardContent, CardMedia, Typography, Button, Container } from '@mui/material'
-
 import axios from 'axios'
+
 import { API_URL } from './../const/constants'
 
 function Control() {
@@ -11,7 +11,7 @@ function Control() {
     const [robots, setRobot] = useState([])
     const [loading, setLoading] = useState('')
 
-    useEffect(async () => {
+    const fetchRobots = useCallback(async () => {
         try {
             setLoading('Discovering Robots...')
             if (!state.token) throw new Error("No token found")
@@ -26,7 +26,11 @@ function Control() {
         finally {
             setLoading('')
         }
-    }, [])
+    }, [state, setLoading])
+
+    useEffect(() => {
+        fetchRobots()
+    }, [fetchRobots])
 
     return (
         <Container maxWidth="sm" sx={{ marginTop: '100px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>

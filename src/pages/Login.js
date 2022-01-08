@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import { useNavigate } from "react-router-dom"
 import { Button, TextField, Container } from '@mui/material'
 import axios from 'axios'
@@ -11,7 +11,7 @@ function Login() {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
 
-    const authenticate = async () => {
+    const authenticate = useCallback(async () => {
         const authData = {
             username: username,
             password: password,
@@ -26,7 +26,7 @@ function Login() {
         } finally {
             setLoadingMsg('')
         }
-    }
+    }, [username, password, setLoadingMsg, navigate])
 
     return (
         <Container maxWidth="sm" sx={{ marginTop: '100px', display: 'flex', flexDirection: 'column', alignitems: 'space-evenly' }}>
