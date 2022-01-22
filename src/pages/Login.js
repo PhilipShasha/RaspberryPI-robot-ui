@@ -1,32 +1,23 @@
 import React, { useState, useCallback } from 'react'
 import { useNavigate } from "react-router-dom"
 import { Button, TextField, Container } from '@mui/material'
-import axios from 'axios'
+import { useDispatch } from 'react-redux'
 
-import { API_URL } from './../const/constants'
+import { login } from '../store/actions/User'
 
 function Login() {
     let navigate = useNavigate()
+    const dispatch = useDispatch()
     const [loadingMsg, setLoadingMsg] = useState('')
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
 
     const authenticate = useCallback(async () => {
-        const authData = {
-            username: username,
-            password: password,
-            isRobot: false
-        }
-        try {
-            setLoadingMsg('Logging in')
-            const response = await axios.post(`${API_URL}/login`, authData)
-            navigate('/control', { state: { token: response.data.token } })
-        } catch (err) {
-            console.error(err)
-        } finally {
-            setLoadingMsg('')
-        }
-    }, [username, password, setLoadingMsg, navigate])
+        setLoadingMsg('Logging in')
+        let loggedIn = await dispatch(login(username, password))
+        setLoadingMsg('')
+        if (loggedIn) navigate('/control')
+    }, [username, password, setLoadingMsg, navigate, dispatch])
 
     return (
         <Container maxWidth="sm" sx={{ marginTop: '100px', display: 'flex', flexDirection: 'column', alignitems: 'space-evenly' }}>
