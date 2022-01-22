@@ -19,7 +19,7 @@ function userReducer(state = initialState, action) {
         case "LIST_ROBOTS":
             return { ...state, robots: action.payload }
         case "WEBSOCKET_CONNECT":
-            return { ...state, robot: action.payload.robot, socketConn: action.payload.socketConn, socketErr: '' }
+            return { ...state, robot: action.payload.robot, socketConn: action.payload.socketConn, ping: null, socketErr: '' }
         case "WEBSOCKET_ERROR":
             return { ...state, socketErr: action.payload }
         case "TX_PING":

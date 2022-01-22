@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useEffect, useCallback } from 'react'
 import { Link } from "react-router-dom"
-import { Card, CardActions, CardMedia, CardContent, Typography, Button, Container } from '@mui/material'
-import Loader from "react-loader-spinner"
+import { Card, CardActions, CardMedia, CardContent, Typography, Button, Container, CircularProgress, LinearProgress, Skeleton } from '@mui/material'
 import { useSelector, useDispatch } from 'react-redux'
 
 import { getRobots, connectRobotSock, disconnectRobotSock, calcPing } from '../store/actions/User'
@@ -32,10 +31,10 @@ function Control() {
     }, [fetchRobots])
     return (
         state.socketConn && state.robot && !state.loading
-            ? <ActiveSession activeRobot={state.robot} disconnect={disconnect} ping={state.ping} />
+            ? <ActiveSession activeRobot={state.robot} disconnect={disconnect} ping={state.ping} loading={true} />
             : <Container maxWidth="md" sx={{ marginTop: '100px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <Button size="small" variant='outlined' sx={{ alignSelf: 'flex-end' }}><Link to="/">Logout</Link></Button>
-                {state.loading && state.robots.length === 0 && <Loader type="Puff" color="#00BFFF" height={100} width={100} timeout={3000} />}
+                {state.loading && state.robots.length === 0 && <CircularProgress color="secondary" />}
                 {state.robots?.map((robot, idx) => <Robot data={robot} loading={state.loading} connect={connect} key={idx} />)}
             </Container>
     )
@@ -58,17 +57,18 @@ function Robot(props) {
             </CardContent>
             <CardActions>
                 <Button size="small" variant='contained' onClick={async () => await props.connect(props.data)}>
-                    {props.loading ? <Loader type="Oval" color="#FF0000" height={30} width={30} timeout={3000} /> : 'Connect'}
+                    {props.loading ? "Connecting" : "Connect"}
                 </Button>
                 <Button size="small">Watch stream</Button>
             </CardActions>
+            {props.loading && <LinearProgress color='success' />}
         </Card>
     );
 }
 
 function ActiveSession(props) {
     return (
-        <Container maxWidth="xl" sx={{ marginTop: '100px', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+        <Container maxWidth="xl" sx={{ marginTop: '100px', display: 'flex', flexDirection: 'row' }}>
             {/* Information card */}
             <Card sx={{ maxWidth: 600 }}>
                 <CardContent>
@@ -79,21 +79,22 @@ function ActiveSession(props) {
                         image="https://www.zdnet.com/a/img/resize/8b332212397a18de3eba2a8f4bc2e723d3807d4f/2021/06/11/a419ab3e-428b-40fa-b554-02a18831fce3/raspberry-pi-4-model-b-header.jpg?width=1200&height=900&fit=crop&auto=webp" alt="Robot Picture"
                     />
                     <Typography variant="body2" color="text.secondary">
-                        ID: {props.activeRobot.id}
+                        <b>ID: {props.activeRobot.id}</b>
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                        Online Since: {(new Date(props.activeRobot.iat * 1000)).toLocaleString()}
+                        <b>Online Since: {(new Date(props.activeRobot.iat * 1000)).toLocaleString()}</b>
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                        <b>PING: {props.ping ? `${props.ping}ms` : 'calculating'}</b>
+                        <b>PING: {props.ping ? `${props.ping}ms` : <CircularProgress size={20} />}</b>
                     </Typography>
                 </CardContent>
                 <CardActions>
                     <Button size="small" variant='contained' color='error' onClick={() => props.disconnect()}>Disconnect</Button>
                 </CardActions>
+                {props.loading && <LinearProgress color='success' />}
             </Card>
             {/* Video stream */}
-            <img src="https://picsum.photos/700/400" alt="Robot video stream" />
+            {props.loading && <Skeleton variant="rectangular" width={700} height={400} />}
         </Container>
     );
 }

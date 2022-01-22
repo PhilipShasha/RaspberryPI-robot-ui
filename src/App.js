@@ -1,7 +1,6 @@
 import './App.css'
 import { Routes, Route, BrowserRouter } from "react-router-dom"
 import { Provider } from 'react-redux'
-import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
 
 // Pages imports
 import Login from './pages/Login'
