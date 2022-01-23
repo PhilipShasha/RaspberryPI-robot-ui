@@ -6,6 +6,7 @@ const initialState = {
     robots: [],
     robot: null,
     socketConn: null,
+    streamConn: null,
     socketErr: '',
     ping: null
 }
@@ -24,6 +25,8 @@ function userReducer(state = initialState, action) {
             return { ...state, socketErr: action.payload }
         case "TX_PING":
             return { ...state, ping: action.payload }
+        case "STREAM_CONNECT":
+            return { ...state, robot: action.payload.robot, streamConn: action.payload.streamConn, ping: null, socketErr: '' }
         case "SET_LOADING":
             return { ...state, loading: action.payload }
         default:

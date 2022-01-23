@@ -65,7 +65,7 @@ export function connectRobotSock(robot) {
             if (state.socketConn)
                 state.socketConn.close()
 
-            const socketConn = new WebSocket(`${SOCK_URL}/ws?token=${state.token}`)
+            const socketConn = new WebSocket(`${SOCK_URL}/ws?token=${state.token}&view=false&lobby=${robot.id}`)
             let pingInterval
             socketConn.addEventListener('open', event => {
                 console.log('Socket Opened')
@@ -91,10 +91,13 @@ export function connectRobotSock(robot) {
                             const startDate = new Date(message.data)
                             const diff = Date.now() - startDate
                             dispatch({ type: "TX_PING", payload: diff })
+                            break
+                        default:
+                            console.log(`Unrecognized command recieved ${message.cmd.toUpperCase()}`)
                     }
                     dispatch({ type: "RECV_MESSAGE", payload: message })
                 } catch (err) {
-                    console.log(`Failed to parse Server sock msg as JSON${err}`)
+                    console.log(`Failed to parse Server sock msg as JSON ${err}`)
                 }
             })
             // Save socket in redux store
@@ -149,6 +152,66 @@ export function calcPing(robot) {
         }
         catch (err) {
             console.log(`Error pinging websocket: ${err}`)
+        }
+    }
+}
+
+export function connectRobotStream(robot) {
+    return async (dispatch, getState) => {
+        dispatch({ type: "SET_LOADING", payload: true })
+        try {
+            const state = getState().userReducer
+            if (!state.token) throw new Error("Token is not present. Re-auth required")
+
+            // Close existing socket 
+            if (state.streamConn)
+                state.streamConn.close()
+
+            const streamConn = new WebSocket(`${SOCK_URL}/ws?token=${state.token}&view=true&lobby=${robot.id}`)
+            streamConn.addEventListener('open', event => {
+                console.log('Socket Opened')
+                dispatch({ type: "SET_LOADING", payload: false })
+            })
+            streamConn.addEventListener('error', event => {
+                console.error('Socket Error: ', event)
+            })
+            streamConn.addEventListener('close', event => {
+                console.log('Socket Closed')
+            })
+            streamConn.addEventListener('message', event => {
+                // HANDLE VIDEO STREAM FROM SERVER
+                console.log('Recieved Video Frame')
+            })
+            // Save socket in redux store
+            dispatch({ type: "STREAM_CONNECT", payload: { streamConn: streamConn, robot: robot } })
+            return true
+        }
+        catch (err) {
+            console.log(`Error connecting to websocket stream: ${err}`)
+            return false
+        }
+    }
+}
+
+export function disconnectRobotStream() {
+    return async (dispatch, getState) => {
+        dispatch({ type: "SET_LOADING", payload: true })
+        try {
+            const state = getState().userReducer
+            if (!state.token) throw new Error("Token is not present. Re-auth required")
+
+            // Close existing socket 
+            if (state.streamConn)
+                state.streamConn.close()
+
+            // Save socket in redux store
+            dispatch({ type: "STREAM_CONNECT", payload: { streamConn: null, robot: null } })
+        }
+        catch (err) {
+            console.log(`Error connecting to websocket: ${err}`)
+        }
+        finally {
+            dispatch({ type: "SET_LOADING", payload: false })
         }
     }
 }

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom"
 import { Card, CardActions, CardMedia, CardContent, Typography, Button, Container, CircularProgress, LinearProgress, Skeleton } from '@mui/material'
 import { useSelector, useDispatch } from 'react-redux'
 
-import { getRobots, connectRobotSock, disconnectRobotSock, calcPing } from '../store/actions/User'
+import { getRobots, connectRobotSock, disconnectRobotSock, connectRobotStream, disconnectRobotStream } from '../store/actions/User'
 
 function Control() {
     const state = useSelector(state => state.userReducer)
@@ -17,6 +17,7 @@ function Control() {
         }
     }, [dispatch])
 
+    // Sockets
     const connect = useCallback(async (robot) => {
         await dispatch(connectRobotSock(robot))
     }, [dispatch])
@@ -25,24 +26,34 @@ function Control() {
         await dispatch(disconnectRobotSock(robot))
     }, [dispatch])
 
+    // Streams
+    const connectStream = useCallback(async (robot) => {
+        await dispatch(connectRobotStream(robot))
+    }, [dispatch])
+
+    const disconnectStream = useCallback(async (robot) => {
+        await dispatch(disconnectRobotSock(robot))
+    }, [dispatch])
+
     // Fetch robo list on load
     useEffect(() => {
         fetchRobots()
     }, [fetchRobots])
+
     return (
         state.socketConn && state.robot && !state.loading
             ? <ActiveSession activeRobot={state.robot} disconnect={disconnect} ping={state.ping} loading={true} />
             : <Container maxWidth="md" sx={{ marginTop: '100px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <Button size="small" variant='outlined' sx={{ alignSelf: 'flex-end' }}><Link to="/">Logout</Link></Button>
                 {state.loading && state.robots.length === 0 && <CircularProgress color="secondary" />}
-                {state.robots?.map((robot, idx) => <Robot data={robot} loading={state.loading} connect={connect} key={idx} />)}
+                {state.robots?.map((robot, idx) => <Robot data={robot} loading={state.loading} connect={connect} connectStream={connectStream} key={idx} />)}
             </Container>
     )
 }
 
 function Robot(props) {
     return (
-        <Card sx={{ maxWidth: 345 }}>
+        <Card sx={{ width: 345 }}>
             <CardContent>
                 <Typography gutterBottom variant="h5" component="div">
                     {props.data.username}
@@ -59,7 +70,7 @@ function Robot(props) {
                 <Button size="small" variant='contained' onClick={async () => await props.connect(props.data)}>
                     {props.loading ? "Connecting" : "Connect"}
                 </Button>
-                <Button size="small">Watch stream</Button>
+                <Button size="small" onClick={async () => await props.connectStream(props.data)}>Watch stream</Button>
             </CardActions>
             {props.loading && <LinearProgress color='success' />}
         </Card>
