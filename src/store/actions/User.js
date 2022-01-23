@@ -230,12 +230,13 @@ export function sendCommand(key) {
             if (!state.socketConn) throw new Error("Socket not active. Cannot ping")
             if (!allowedkeys.includes(key)) throw new Error("Invalid command")
 
-            const pingTX = JSON.stringify({
+            const pingCmd = {
                 cmd: "TX_CMD",
                 data: key,
                 target: state.robot.id
-            })
-            state.socketConn.send(pingTX)
+            }
+            console.log(pingCmd)
+            state.socketConn.send(JSON.stringify(pingCmd))
         }
         catch (err) {
             console.log(`Error sending command through websocket: ${err}`)

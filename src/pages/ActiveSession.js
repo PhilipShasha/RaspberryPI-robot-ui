@@ -33,6 +33,7 @@ export default function ActiveControlSession(props) {
                 {/* Video stream */}
                 {props.loading && <Skeleton variant="rectangular" width={700} height={400} />}
             </Container>
+            {/* Control box to send robot commands */}
             {props.control && <input style={{ width: '100%' }} type="text" id="one" onKeyPress={(e) => props.sendCommand(e)} value={""} onChange={() => { }} />}
         </Container>
     )

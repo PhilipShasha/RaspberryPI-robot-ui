@@ -16,8 +16,7 @@ function Control() {
 
     // Sockets
     const send = useCallback(async (event) => {
-        console.log(event)
-        await dispatch(sendCommand(event?.key))
+        await dispatch(sendCommand(event.key))
     }, [dispatch])
 
     const connect = useCallback(async (robot) => {
