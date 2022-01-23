@@ -1,6 +1,10 @@
 import axios from 'axios'
 import { API_URL, SOCK_URL, PING_INTERVAL } from './../../const/constants'
 
+const allowedkeys = ['w', 's', 'a', 'd']
+
+// REST API endpoints
+
 export function login(username, password) {
     return async (dispatch) => {
         try {
@@ -53,6 +57,8 @@ export function getRobots() {
         }
     }
 }
+
+// WebSocket methods
 
 export function connectRobotSock(robot) {
     return async (dispatch, getState) => {
@@ -134,28 +140,6 @@ export function disconnectRobotSock() {
     }
 }
 
-export function calcPing(robot) {
-    return async (dispatch, getState) => {
-        try {
-            const state = getState().userReducer
-            if (!state.token) throw new Error("Token is not present. Re-auth required")
-
-            // Close existing socket 
-            if (!state.socketConn) throw new Error("Socket not active. Cannot ping")
-
-            const pingTX = JSON.stringify({
-                cmd: "TX_PING",
-                data: Date.now(),
-                target: state.robot.id
-            })
-            state.socketConn.send(pingTX)
-        }
-        catch (err) {
-            console.log(`Error pinging websocket: ${err}`)
-        }
-    }
-}
-
 export function connectRobotStream(robot) {
     return async (dispatch, getState) => {
         dispatch({ type: "SET_LOADING", payload: true })
@@ -212,6 +196,49 @@ export function disconnectRobotStream() {
         }
         finally {
             dispatch({ type: "SET_LOADING", payload: false })
+        }
+    }
+}
+
+export function calcPing(robot) {
+    return async (dispatch, getState) => {
+        try {
+            const state = getState().userReducer
+
+            if (!state.token) throw new Error("Token is not present. Re-auth required")
+            if (!state.socketConn) throw new Error("Socket not active. Cannot ping")
+
+            const pingTX = JSON.stringify({
+                cmd: "TX_PING",
+                data: Date.now(),
+                target: state.robot.id
+            })
+            state.socketConn.send(pingTX)
+        }
+        catch (err) {
+            console.log(`Error pinging websocket: ${err}`)
+        }
+    }
+}
+
+export function sendCommand(key) {
+    return async (dispatch, getState) => {
+        try {
+            const state = getState().userReducer
+
+            if (!state.token) throw new Error("Token is not present. Re-auth required")
+            if (!state.socketConn) throw new Error("Socket not active. Cannot ping")
+            if (!allowedkeys.includes(key)) throw new Error("Invalid command")
+
+            const pingTX = JSON.stringify({
+                cmd: "TX_CMD",
+                data: key,
+                target: state.robot.id
+            })
+            state.socketConn.send(pingTX)
+        }
+        catch (err) {
+            console.log(`Error sending command through websocket: ${err}`)
         }
     }
 }
