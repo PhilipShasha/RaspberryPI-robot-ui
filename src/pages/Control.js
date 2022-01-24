@@ -2,9 +2,9 @@ import React, { useEffect, useCallback } from 'react'
 import { Link } from "react-router-dom"
 import { Card, CardActions, CardMedia, CardContent, Typography, Button, Container, CircularProgress, LinearProgress } from '@mui/material'
 import { useSelector, useDispatch } from 'react-redux'
-
 import { getRobots, connectRobotSock, disconnectRobotSock, connectRobotStream, disconnectRobotStream, sendCommand } from '../store/actions/User'
 import ActiveControlSession from './ActiveSession'
+import robotPic from '../static/robot.jpg'
 
 function Control() {
     const state = useSelector(state => state.userReducer)
@@ -44,8 +44,8 @@ function Control() {
     return (
         state.robot && !state.loading
             ? state.socketConn
-                ? <ActiveControlSession activeRobot={state.robot} disconnect={disconnect} sendCommand={send} ping={state.ping} loading={true} control={true} />
-                : <ActiveControlSession activeRobot={state.robot} disconnect={disconnectStream} ping={state.ping} loading={true} />
+                ? <ActiveControlSession activeRobot={state.robot} disconnect={disconnect} sendCommand={send} ping={{ server: state.pingServer, robot: state.pingRobot }} loading={true} control={true} />
+                : <ActiveControlSession activeRobot={state.robot} disconnect={disconnectStream} ping={{ server: state.pingServer, robot: state.pingRobot }} loading={true} />
             : <Container maxWidth="md" sx={{ marginTop: '100px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <Button size="small" variant='outlined' sx={{ alignSelf: 'flex-end' }}><Link to="/">Logout</Link></Button>
                 {state.loading && state.robots.length === 0 && <CircularProgress color="secondary" />}
@@ -62,7 +62,7 @@ function Robot(props) {
                     {props.data.username}
                 </Typography>
                 <CardMedia component="img" height="194"
-                    image="https://www.zdnet.com/a/img/resize/8b332212397a18de3eba2a8f4bc2e723d3807d4f/2021/06/11/a419ab3e-428b-40fa-b554-02a18831fce3/raspberry-pi-4-model-b-header.jpg?width=1200&height=900&fit=crop&auto=webp" alt="Robot Picture"
+                    image={robotPic} alt="Robot Picture"
                 />
                 <Typography variant="body2" color="text.secondary">
                     <p>ID: {props.data.id}</p>

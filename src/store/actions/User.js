@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { API_URL, SOCK_URL, PING_INTERVAL } from './../../const/constants'
 
-const allowedkeys = ['w', 's', 'a', 'd']
+const allowedkeys = ['W', 'S', 'A', 'D']
 
 // REST API endpoints
 
@@ -96,7 +96,10 @@ export function connectRobotSock(robot) {
                         case "TX_PING":
                             const startDate = new Date(message.data)
                             const diff = Date.now() - startDate
-                            dispatch({ type: "TX_PING", payload: diff })
+                            if (message.sender === "server")
+                                dispatch({ type: "TX_PING_SERVER", payload: diff })
+                            if (message.sender === robot.id)
+                                dispatch({ type: "TX_PING_ROBOT", payload: diff })
                             break
                         default:
                             console.log(`Unrecognized command recieved ${message.cmd.toUpperCase()}`)
@@ -208,12 +211,21 @@ export function calcPing(robot) {
             if (!state.token) throw new Error("Token is not present. Re-auth required")
             if (!state.socketConn) throw new Error("Socket not active. Cannot ping")
 
-            const pingTX = JSON.stringify({
+            // Send Server Ping 
+            const pingSrvTX = JSON.stringify({
+                cmd: "TX_PING",
+                data: Date.now(),
+                target: "server"
+            })
+            state.socketConn.send(pingSrvTX)
+
+            // Send Robot Ping
+            const pingRobotTX = JSON.stringify({
                 cmd: "TX_PING",
                 data: Date.now(),
                 target: state.robot.id
             })
-            state.socketConn.send(pingTX)
+            state.socketConn.send(pingRobotTX)
         }
         catch (err) {
             console.log(`Error pinging websocket: ${err}`)
@@ -228,15 +240,15 @@ export function sendCommand(key) {
 
             if (!state.token) throw new Error("Token is not present. Re-auth required")
             if (!state.socketConn) throw new Error("Socket not active. Cannot ping")
-            if (!allowedkeys.includes(key)) throw new Error("Invalid command")
+            if (!allowedkeys.includes(key.toUpperCase())) throw new Error("Invalid command")
 
-            const pingCmd = {
+            const cmdTX = {
                 cmd: "TX_CMD",
-                data: key,
+                data: key.toUpperCase(),
                 target: state.robot.id
             }
-            console.log(pingCmd)
-            state.socketConn.send(JSON.stringify(pingCmd))
+            console.log(cmdTX)
+            state.socketConn.send(JSON.stringify(cmdTX))
         }
         catch (err) {
             console.log(`Error sending command through websocket: ${err}`)

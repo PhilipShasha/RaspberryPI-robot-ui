@@ -1,6 +1,6 @@
 
 import { Card, CardActions, CardMedia, CardContent, Typography, Button, Container, CircularProgress, LinearProgress, Skeleton } from '@mui/material'
-
+import robotPic from '../static/robot.jpg'
 
 export default function ActiveControlSession(props) {
     return (
@@ -13,16 +13,19 @@ export default function ActiveControlSession(props) {
                             {props.control ? "Controlling" : "Viewing"} {props.activeRobot.username}
                         </Typography>
                         <CardMedia component="img" height="194"
-                            image="https://www.zdnet.com/a/img/resize/8b332212397a18de3eba2a8f4bc2e723d3807d4f/2021/06/11/a419ab3e-428b-40fa-b554-02a18831fce3/raspberry-pi-4-model-b-header.jpg?width=1200&height=900&fit=crop&auto=webp" alt="Robot Picture"
+                            image={robotPic} alt="Robot Picture"
                         />
-                        <Typography variant="body2" color="text.secondary">
+                        <Typography ariant="body2" color="text.secondary">
                             <b>ID: {props.activeRobot.id}</b>
                         </Typography>
-                        <Typography variant="body2" color="text.secondary">
+                        <Typography gutterBottom variant="body2" color="text.secondary">
                             <b>Online Since: {(new Date(props.activeRobot.iat * 1000)).toLocaleString()}</b>
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                            <b>PING: {props.ping ? `${props.ping}ms` : <CircularProgress size={20} />}</b>
+                            <b>PING Server: {props.ping?.server ? `${props.ping.server}ms` : <CircularProgress size={20} />}</b>
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                            <b>PING Robot: {props.ping?.robot ? `${props.ping.robot}ms` : <CircularProgress size={20} />}</b>
                         </Typography>
                     </CardContent>
                     <CardActions>

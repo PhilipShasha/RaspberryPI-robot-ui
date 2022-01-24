@@ -8,7 +8,8 @@ const initialState = {
     socketConn: null,
     streamConn: null,
     socketErr: '',
-    ping: null
+    pingServer: null,
+    pingRobot: null
 }
 
 function userReducer(state = initialState, action) {
@@ -23,8 +24,10 @@ function userReducer(state = initialState, action) {
             return { ...state, robot: action.payload.robot, socketConn: action.payload.socketConn, ping: null, socketErr: '' }
         case "WEBSOCKET_ERROR":
             return { ...state, socketErr: action.payload }
-        case "TX_PING":
-            return { ...state, ping: action.payload }
+        case "TX_PING_SERVER":
+            return { ...state, pingServer: action.payload }
+        case "TX_PING_ROBOT":
+            return { ...state, pingRobot: action.payload }
         case "STREAM_CONNECT":
             return { ...state, robot: action.payload.robot, streamConn: action.payload.streamConn, ping: null, socketErr: '' }
         case "SET_LOADING":
