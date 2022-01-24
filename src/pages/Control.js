@@ -47,7 +47,9 @@ function Control() {
                 ? <ActiveControlSession activeRobot={state.robot} disconnect={disconnect} sendCommand={send} ping={{ server: state.pingServer, robot: state.pingRobot }} loading={true} control={true} />
                 : <ActiveControlSession activeRobot={state.robot} disconnect={disconnectStream} ping={{ server: state.pingServer, robot: state.pingRobot }} loading={true} />
             : <Container maxWidth="md" sx={{ marginTop: '100px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <Button size="small" variant='outlined' sx={{ alignSelf: 'flex-end' }}><Link to="/">Logout</Link></Button>
+                <Link to="/" style={{ color: 'white', textDecoration: 'none', alignSelf: 'flex-end' }}>
+                    <Button size="small" variant='contained'>Logout</Button>
+                </Link>
                 {state.loading && state.robots.length === 0 && <CircularProgress color="secondary" />}
                 {state.robots?.map((robot, idx) => <Robot data={robot} loading={state.loading} connect={connect} connectStream={connectStream} key={idx} />)}
             </Container>
@@ -56,7 +58,7 @@ function Control() {
 
 function Robot(props) {
     return (
-        <Card sx={{ width: 345 }}>
+        <Card sx={{ width: 400, padding: '10px' }}>
             <CardContent>
                 <Typography gutterBottom variant="h5" component="div">
                     {props.data.username}
