@@ -1,5 +1,5 @@
 import './App.css'
-import { Routes, Route, BrowserRouter } from "react-router-dom"
+import { Routes, Route, HashRouter } from "react-router-dom"
 import { Provider } from 'react-redux'
 
 // Pages imports
@@ -10,12 +10,12 @@ import { store } from './store/Store'
 function App() {
     return (
         <Provider store={store}>
-            <BrowserRouter>
+            <HashRouter>
                 <Routes>
                     <Route path="/" element={<Login />} />
                     <Route path="/control" element={<Control />} />
                 </Routes>
-            </BrowserRouter>
+            </HashRouter>
         </Provider>
     )
 }
