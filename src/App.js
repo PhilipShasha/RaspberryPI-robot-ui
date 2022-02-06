@@ -1,20 +1,22 @@
 import './App.css'
-import { Routes, Route, BrowserRouter } from "react-router-dom"
+import { Routes, Route, HashRouter } from "react-router-dom"
+import { Provider } from 'react-redux'
 
 // Pages imports
 import Login from './pages/Login'
 import Control from './pages/Control'
-
-import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
+import { store } from './store/Store'
 
 function App() {
     return (
-        <BrowserRouter>
-            <Routes>
-                <Route path="/" element={<Login />} />
-                <Route path="/control" element={<Control />} />
-            </Routes>
-        </BrowserRouter>
+        <Provider store={store}>
+            <HashRouter>
+                <Routes>
+                    <Route path="/" element={<Login />} />
+                    <Route path="/control" element={<Control />} />
+                </Routes>
+            </HashRouter>
+        </Provider>
     )
 }
 
