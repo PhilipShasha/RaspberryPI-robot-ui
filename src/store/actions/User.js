@@ -167,6 +167,7 @@ export function connectRobotStream(robot) {
             })
             streamConn.addEventListener('message', event => {
                 // HANDLE VIDEO STREAM FROM SERVER
+                dispatch({ type: "RX_FRAME", payload: { currentFrame: event.data} })
                 console.log('Recieved Video Frame')
             })
             // Save socket in redux store

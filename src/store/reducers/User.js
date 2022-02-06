@@ -7,6 +7,7 @@ const initialState = {
     robot: null,
     socketConn: null,
     streamConn: null,
+    currentFrame: '',
     socketErr: '',
     pingServer: null,
     pingRobot: null
@@ -30,6 +31,8 @@ function userReducer(state = initialState, action) {
             return { ...state, pingRobot: action.payload }
         case "STREAM_CONNECT":
             return { ...state, robot: action.payload.robot, streamConn: action.payload.streamConn, ping: null, socketErr: '' }
+        case "RX_FRAME":
+            return { ...state, currentFrame: action.payload.currentFrame }  
         case "SET_LOADING":
             return { ...state, loading: action.payload }
         default:
