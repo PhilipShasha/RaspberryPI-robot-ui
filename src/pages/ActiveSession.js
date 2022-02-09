@@ -42,8 +42,8 @@ export default function ActiveControlSession(props) {
                     {props.control && <TextField fullWidth id="command-box" label="Press Command" variant="filled" onKeyPress={(e) => props.sendCommand(e)} value={""} onChange={() => { }} />}
                 </Card>
                 {/* Video stream */}
-                {props.loading && <Skeleton variant="rectangular" width="70%" height={500} sx={{ bgcolor: 'grey.600' }} />}
-                {!props.loading && <img src={`data:image/jpeg;base64,${props.currentFrame}`} width="70%" height={500} />}
+                {props.loading && !props.currentFrame && <Skeleton variant="rectangular" width="70%" height={500} sx={{ bgcolor: 'grey.600' }} />}
+                {!props.loading && props.currentFrame && <img src={`data:image/jpeg;base64,${props.currentFrame}`} width="70%" height={500} />}
             </Container>
         </Container>
     )

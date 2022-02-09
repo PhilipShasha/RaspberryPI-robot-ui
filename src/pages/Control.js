@@ -21,10 +21,12 @@ function Control() {
 
     const connect = useCallback(async (robot) => {
         await dispatch(connectRobotSock(robot))
+        await dispatch(connectRobotStream(robot))
     }, [dispatch])
 
     const disconnect = useCallback(async (robot) => {
         await dispatch(disconnectRobotSock(robot))
+        await dispatch(disconnectRobotStream(robot))
     }, [dispatch])
 
     // Streams
