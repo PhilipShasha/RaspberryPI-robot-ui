@@ -155,6 +155,8 @@ export function connectRobotStream(robot) {
                 state.streamConn.close()
 
             const streamConn = new WebSocket(`${SOCK_URL}/ws?token=${state.token}&view=true&lobby=${robot.id}`)
+            streamConn.binaryType = 'arraybuffer'
+
             streamConn.addEventListener('open', event => {
                 console.log('Socket Opened')
                 dispatch({ type: "SET_LOADING", payload: false })
@@ -167,7 +169,7 @@ export function connectRobotStream(robot) {
             })
             streamConn.addEventListener('message', event => {
                 // HANDLE VIDEO STREAM FROM SERVER
-                dispatch({ type: "RX_FRAME", payload: { currentFrame: event.data} })
+                dispatch({ type: "RX_FRAME", payload: { currentFrame: event.data } })
                 console.log('Recieved Video Frame')
             })
             // Save socket in redux store
