@@ -1,8 +1,13 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useState, useEffect } from 'react'
 import { Card, CardActions, CardMedia, CardContent, Typography, Button, Container, CircularProgress, LinearProgress, TextField, Skeleton, Stack, Chip, Divider } from '@mui/material'
 import robotPic from '../static/robot.jpg'
+import JMuxer from 'jmuxer'
+
+let lastFrame = null
 
 export default function ActiveControlSession(props) {
+
+    const [jmuxer, setJmuxer] = useState(null)
 
     const getPingColor = useCallback((ping) => {
         if (!ping) return "primary"
@@ -11,7 +16,36 @@ export default function ActiveControlSession(props) {
         else return "error"
     }, [])
 
+    useEffect(() => {
+        if (jmuxer === 5) {
+            setJmuxer(new JMuxer({
+                node: 'player',
+                mode: 'video',
+                flushingTime: 1500,
+                fps: 3,
+                debug: true,
+                onError: function (data) {
+                    console.log('error JMUXER')
+                }
+            }))
+        }
+        if (!jmuxer) {
+            setJmuxer(5)
+        }
+    })
+
+
+
+    if (props.currentFrame && props.currentFrame !== lastFrame && jmuxer) {
+        let h264DataBuf = new Uint8Array(props.currentFrame)
+        console.log(h264DataBuf)
+        jmuxer.feed({
+            video: h264DataBuf
+        });
+        lastFrame = props.currentFrame
+    }
     return (
+
         <Container maxWidth="xl">
             <Container sx={{ marginTop: '100px', display: 'flex', flexDirection: 'row' }}>
                 {/* Information card */}
@@ -43,7 +77,8 @@ export default function ActiveControlSession(props) {
                 </Card>
                 {/* Video stream */}
                 {props.loading && !props.currentFrame && <Skeleton variant="rectangular" width="70%" height={500} sx={{ bgcolor: 'grey.600' }} />}
-                {!props.loading && props.currentFrame && <img src={`data:image/jpeg;base64,${props.currentFrame}`} width="70%" height={500} />}
+                {/* {!props.loading && props.currentFrame && <img src={`data:image/jpeg;base64,${props.currentFrame}`} width="70%" height={500} />} */}
+                {!props.loading && <video style={{ width: '500px' }} id="player" autoPlay={true} controls={true} />}
             </Container>
         </Container>
     )
