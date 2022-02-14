@@ -3,11 +3,9 @@ import { Card, CardActions, CardMedia, CardContent, Typography, Button, Containe
 import robotPic from '../static/robot.jpg'
 import JMuxer from 'jmuxer'
 
-let lastFrame = null
-
 export default function ActiveControlSession(props) {
 
-    const [jmuxer, setJmuxer] = useState(null)
+    const [jmuxer, setJmuxer] = useState(0)
 
     const getPingColor = useCallback((ping) => {
         if (!ping) return "primary"
@@ -17,33 +15,30 @@ export default function ActiveControlSession(props) {
     }, [])
 
     useEffect(() => {
-        if (jmuxer === 5) {
+        // This if/else is a hack to setJmuxer only on the second render (otherwise the video player isn't in the DOM)
+        if (jmuxer === 1) {
             setJmuxer(new JMuxer({
                 node: 'player',
                 mode: 'video',
-                flushingTime: 1500,
-                fps: 3,
-                debug: true,
-                onError: function (data) {
-                    console.log('error JMUXER')
+                fps: 21,
+                onError: function (err) {
+                    console.error(`JMUXER err: ${err}`)
                 }
             }))
         }
         if (!jmuxer) {
-            setJmuxer(5)
+            setJmuxer(1)
         }
-    })
+    }, [setJmuxer, jmuxer])
 
+    // Feed H264 data everytime it arrives
+    useEffect(() => {
+        if (typeof jmuxer === 'object')
+            jmuxer.feed({
+                video: new Uint8Array(props.currentFrame)
+            });
+    }, [props.currentFrame, jmuxer])
 
-
-    if (props.currentFrame && props.currentFrame !== lastFrame && jmuxer) {
-        let h264DataBuf = new Uint8Array(props.currentFrame)
-        console.log(h264DataBuf)
-        jmuxer.feed({
-            video: h264DataBuf
-        });
-        lastFrame = props.currentFrame
-    }
     return (
 
         <Container maxWidth="xl">
@@ -78,7 +73,7 @@ export default function ActiveControlSession(props) {
                 {/* Video stream */}
                 {props.loading && !props.currentFrame && <Skeleton variant="rectangular" width="70%" height={500} sx={{ bgcolor: 'grey.600' }} />}
                 {/* {!props.loading && props.currentFrame && <img src={`data:image/jpeg;base64,${props.currentFrame}`} width="70%" height={500} />} */}
-                {!props.loading && <video style={{ width: '500px' }} id="player" autoPlay={true} controls={true} />}
+                {!props.loading && <video style={{ width: 700, height: 550 }} id="player" autoPlay={true} controls={true} />}
             </Container>
         </Container>
     )

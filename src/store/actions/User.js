@@ -96,6 +96,7 @@ export function connectRobotSock(robot) {
                         case "TX_PING":
                             const startDate = new Date(message.data)
                             const diff = Date.now() - startDate
+                            if (!diff) return
                             if (message.sender === "server")
                                 dispatch({ type: "TX_PING_SERVER", payload: diff })
                             if (message.sender === robot.id)
@@ -104,7 +105,6 @@ export function connectRobotSock(robot) {
                         default:
                             console.log(`Unrecognized command recieved ${message.cmd.toUpperCase()}`)
                     }
-                    dispatch({ type: "RECV_MESSAGE", payload: message })
                 } catch (err) {
                     console.log(`Failed to parse Server sock msg as JSON ${err}`)
                 }
