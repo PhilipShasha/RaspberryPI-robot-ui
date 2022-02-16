@@ -102,6 +102,9 @@ export function connectRobotSock(robot) {
                             if (message.sender === robot.id)
                                 dispatch({ type: "TX_PING_ROBOT", payload: diff })
                             break
+                        case "TX_STATS":
+                            dispatch({ type: "TX_STATS", payload: message.data })
+                            break
                         default:
                             console.log(`Unrecognized command recieved ${message.cmd.toUpperCase()}`)
                     }

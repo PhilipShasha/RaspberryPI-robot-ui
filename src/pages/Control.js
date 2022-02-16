@@ -55,7 +55,7 @@ function Control() {
     return (
         state.robot && !state.loading
             ? state.socketConn
-                ? <ActiveControlSession activeRobot={state.robot} disconnect={disconnect} sendCommand={send} ping={{ server: state.pingServer, robot: state.pingRobot }} loading={state.loading} currentFrame={state.currentFrame} control={true} />
+                ? <ActiveControlSession activeRobot={state.robot} disconnect={disconnect} sendCommand={send} ping={{ server: state.pingServer, robot: state.pingRobot }} statsRobot={state.statsRobot} loading={state.loading} currentFrame={state.currentFrame} control={true} />
                 : <ActiveControlSession activeRobot={state.robot} disconnect={disconnectStream} ping={{ server: state.pingServer, robot: state.pingRobot }} loading={state.loading} currentFrame={state.currentFrame} />
             : <Container maxWidth="md" sx={{ marginTop: '100px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', width: '70%', marginBottom: 20 }}>

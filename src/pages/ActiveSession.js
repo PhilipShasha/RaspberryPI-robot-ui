@@ -20,7 +20,7 @@ export default function ActiveControlSession(props) {
             setJmuxer(new JMuxer({
                 node: 'player',
                 mode: 'video',
-                fps: 21,
+                fps: 30,
                 onError: function (err) {
                     console.error(`JMUXER err: ${err}`)
                 }
@@ -61,6 +61,8 @@ export default function ActiveControlSession(props) {
                             <Stack direction="column" spacing={1}>
                                 <Chip color={getPingColor(props.ping?.server)} variant="outlined" label={props.ping?.server ? `Ping Server: ${props.ping.server}ms` : <CircularProgress size={20} />} />
                                 <Chip color={getPingColor(props.ping?.robot)} variant="outlined" label={props.ping?.robot ? `Ping Robot: ${props.ping.robot}ms` : <CircularProgress size={20} />} />
+                                <Chip variant="outlined" label={`CPU avg %${props.statsRobot?.cpu?.avg}`} />
+                                <Chip variant="outlined" label={`Mem : ${JSON.stringify(props.statsRobot?.mem)}`} />
                             </Stack>
                         </Typography>
                     </CardContent>
@@ -73,7 +75,7 @@ export default function ActiveControlSession(props) {
                 {/* Video stream */}
                 {props.loading && !props.currentFrame && <Skeleton variant="rectangular" width="70%" height={500} sx={{ bgcolor: 'grey.600' }} />}
                 {/* {!props.loading && props.currentFrame && <img src={`data:image/jpeg;base64,${props.currentFrame}`} width="70%" height={500} />} */}
-                {!props.loading && <video style={{ width: 700, height: 550 }} id="player" autoPlay={true} controls={true} />}
+                {!props.loading && <video style={{ width: 900, height: 650 }} id="player" autoPlay={true} controls={true} />}
             </Container>
         </Container>
     )

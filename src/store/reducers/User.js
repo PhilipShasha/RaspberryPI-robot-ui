@@ -27,12 +27,14 @@ function userReducer(state = initialState, action) {
             return { ...state, socketErr: action.payload }
         case "TX_PING_SERVER":
             return { ...state, pingServer: action.payload }
+        case "TX_STATS":
+            return { ...state, statsRobot: action.payload }
         case "TX_PING_ROBOT":
             return { ...state, pingRobot: action.payload }
         case "STREAM_CONNECT":
             return { ...state, robot: action.payload.robot, streamConn: action.payload.streamConn, ping: null, socketErr: '' }
         case "RX_FRAME":
-            return { ...state, currentFrame: action.payload.currentFrame }  
+            return { ...state, currentFrame: action.payload.currentFrame }
         case "SET_LOADING":
             return { ...state, loading: action.payload }
         default:
