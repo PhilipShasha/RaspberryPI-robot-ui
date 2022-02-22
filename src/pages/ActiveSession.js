@@ -20,6 +20,7 @@ export default function ActiveControlSession(props) {
             setJmuxer(new JMuxer({
                 node: 'player',
                 mode: 'video',
+                flushingTime: 0,
                 fps: 30,
                 onError: function (err) {
                     console.error(`JMUXER err: ${err}`)
